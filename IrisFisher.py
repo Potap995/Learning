@@ -12,7 +12,9 @@ def logloss_grad(x, y):
     return -(y / x)
 
 def softmax_grad(x):
-    # Let x is col
     assert x.shape == (1, 3)
     return np.diagflat(x) - np.dot(x.T, x)
+
+def sigmoid(x):
+    return 1. / (1. + np.exp(-x))
 
