@@ -1,6 +1,23 @@
 import numpy as np
 
 
+class MinMaxNormalizer():  # to [0, 1]
+    def __init(self):
+        self.max = 0
+        self.min = 0
+
+    def fit(self, x):
+        self.max = np.max(x)
+        self.min = np.min(x)
+
+    def normalize(self, x):
+        x -= self.min
+        return x / self.max
+
+    def fit_and_normalize(self, x):
+        self.fit(x)
+        return self.normalize(x)
+
 
 def softmax(x):
     exps = np.exp(x)
@@ -12,11 +29,11 @@ def logloss(x, y):
 def logloss_grad(x, y):
     return -(y / x)
 
-def softmax_grad(x):
-    return np.diagflat(x) - np.dot(x.T, x)
-
 def sigmoid(x):
     return 1. / (1. + np.exp(-x))
+
+def softmax_grad(x):
+    return np.diagflat(x) - np.dot(x.T, x)
 
 
 def check_shape_1(X, y):
@@ -27,8 +44,6 @@ def check_shape_1(X, y):
 
 
 def forward_prop_1(X, y, params):
-    check_shape_1(X, y)
-
     params["L0"] = X
 
     params["L1"] = np.dot(params["L0"], params["W0"]) + params["b0"]
@@ -63,4 +78,25 @@ def back_prop_1(X, y, params, giper_params):
 
     params["W0"] -= giper_params["learning rate"] * params["dE/dW0"]
     params["b0"] -= giper_params["learning rate"] * params["dE/db0"]
+
+
+def random_init(size, left=-0.1, right=0.1):
+    return np.random.random(size=size) * (right + left) + left
+
+def net_init_1(params):
+    params["L0"] = np.zeros((1, 4))
+
+    params["W0"] = random_init((4, 4))
+    params['b0'] = random_init((1, 4))
+
+    params["L1"] = np.zeros((1, 4))
+    params["P1"] = np.zeros((1, 4))
+
+    params["W1"] = random_init((4, 3))
+    params['b1'] = random_init((1, 3))
+
+    params["L2"] = np.zeros((1, 3))
+    params["P2"] = np.zeros((1, 3))
+
+    params["E"] = np.zeros((1, 1))
 
