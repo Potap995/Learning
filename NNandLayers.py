@@ -29,7 +29,7 @@ class FullyConnectedLayer:
 
 class SigmoidLayer:
 
-    def __init__(self):
+    def __init__(self, **params):
         pass
 
     def forward(self, data):
@@ -44,14 +44,22 @@ class SigmoidLayer:
 
 class SoftMaxLayer:
 
-    def __init__(self):
-        pass
+    def __init__(self, **params):
+        self.lossfunc = params.pop("loss", "logloss")
 
     def forward(self, data):
-        pass
+        exps = np.exp(data)
+        self.out_data = exps / np.sum(exps)
+        return self.out_data
 
     def backward(self, deriv):
-        pass
+        if self.lossfunc == "logloss":
+            return self.out_data - deriv
+        else:
+            # I don't know how to make dot product along first axes. Like [2, 3] and [3, 2] to [2, 3, 3]
+            # Can be implemented in loop, but i don't want
+            Id = np.eye(deriv.shape[-1])
+            return deriv[..., np.newaxis] * Id
 
 
 class NET:
